@@ -1,0 +1,35 @@
+import javafx.application.Application.launch
+import kotlinx.coroutines.*
+
+fun main() {
+    runBlocking {
+        // launch() 는 Job을 리턴
+        // Job은 코루틴에 대한 핸들 또는 참조를 보유하므로 코루틴의 수명 주기를 관리할 수 있습니다.
+        // deferred 객체 역시 Job이다.
+        val job = launch {
+            println("job")
+        }
+        job.cancel() // 취소 가능. 수명 주기로 인해 더 이상 작업이 필요없는 경우 코루틴 취소 가능.
+        // 예외로 인해 자식 job이 취소 되면 부모 job도 취소된다. 전파하기때문
+    }
+
+
+    runBlocking {
+        println("${Thread.currentThread().name} - runBlocking function")
+        launch {
+            println("${Thread.currentThread().name} - launch function")
+            // 메인 스레드가 아닌 기본 디스패처 워커 스레드의 코루틴에서 실행된다.
+            // 끝나면 다시 메인으로 돌아감
+            // 컨텍스트를 수정하여(withContext()) 디스페쳐를 전환할 수 있다.
+            withContext(Dispatchers.Default) {
+                println("${Thread.currentThread().name} - withContext function")
+                delay(1000)
+                println("10 results found.")
+            }
+            println("${Thread.currentThread().name} - end of launch function")
+        }
+        println("Loading...")
+    }
+
+
+}
