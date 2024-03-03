@@ -153,10 +153,15 @@ fun MyAppHoisting(modifier: Modifier = Modifier) {
     // by 사용시 위임을 하기 때문에 .value 호출 없이 값 접근시 사용할 수 있음.
     // 가장 상위에 state값 hoisting. onClick 콜백 함수에서 상태값 변경.
     // recomposition 발생 후 Greetings() 실행됨
-    var shouldShowOnBoarding by remember { mutableStateOf(true) }
+//    var shouldShowOnBoarding by remember { mutableStateOf(true) }
+
+    // 화면이 돌아가는 상황과 같은 여러 configuration에서 값이 초기화되는데
+    // 이를 방지하고 계속 저장된 값을 유지하려면 rememberSaveable 키워드를 사용해야한다.
+    var shouldShowOnboarding by rememberSaveable { mutableStateOf(true) }
+
     Surface(modifier) {
-        if (shouldShowOnBoarding) {
-            OnboardingScreenByHoisting(onContinueClicked = { shouldShowOnBoarding = false })
+        if (shouldShowOnboarding) {
+            OnboardingScreenByHoisting(onContinueClicked = { shouldShowOnboarding = false })
         } else {
             Greetings()
         }
