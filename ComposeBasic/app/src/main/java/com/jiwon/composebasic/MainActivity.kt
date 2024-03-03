@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
@@ -88,10 +90,19 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Composable
 private fun Greetings(
     modifier: Modifier = Modifier,
-    names: List<String> = listOf("World", "Compose")
+//    names: List<String> = listOf("World", "Compose")
+    names: List<String> = List(1000) { "it" }
 ) {
-    Column(modifier = modifier.padding(vertical = 4.dp)) {
-        for (name in names) {
+    // 여러개의 리스트를 처리하기 위해 LazyColumn을 사용. recyclerView 역할이지만
+    // 자식을 재활용하지 않는다는 점이 차이점이다.
+    // 스크롤 할때 새로운 컴포저블을 생성하는데 뷰를 인스턴스화 하는 것보다 비용이 적게든다.
+    // items()에 처리할 아이템의 리스트 넣어줌
+    LazyColumn(modifier = modifier.padding(vertical = 4.dp)) {
+//        for (name in names) {
+//            Greeting(name = name)
+//        }
+
+        items(items = names) { name ->
             Greeting(name = name)
         }
     }
