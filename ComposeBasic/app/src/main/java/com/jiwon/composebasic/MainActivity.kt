@@ -3,6 +3,9 @@ package com.jiwon.composebasic
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -55,11 +58,25 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
     // 상태값이 변경이 되었을때 해당 부분만 변경한다.
     // 컴포즈에서 상태값 추적을 하기 위해서는 MutableStateOf 함수를 사용해야한다.
     // 재구성이 여러번 발생할 수 있어 단독으로 할당하진 못하고 remeber키워드가 필요.
-    val expanded = remember {
+//    val expanded = remember {
+//        mutableStateOf(false)
+//    }
+
+    var expanded by rememberSaveable {
         mutableStateOf(false)
     }
 
-    val extrapadding = if (expanded.value) 48.dp else 0.dp
+//    val extrapadding = if (expanded.value) 48.dp else 0.dp
+
+    // animateDpAsState: 애니메이션이 완료될 때까지 값이 계속 업데이트되는 State 객체를 반환
+    // 타입은 dp
+    val extrapadding by animateDpAsState(
+        if (expanded) 48.dp else 0.dp,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        )
+    )
 
     Surface(
         color = MaterialTheme.colorScheme.primary,
@@ -74,14 +91,15 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(bottom = extrapadding)
+                    .padding(bottom = extrapadding.coerceAtLeast(0.dp))
+                // extrapadding.coerceAtLeast(0.dp) : 이거 없으면 에러발생함. 패딩값이 -값이 되는거 방지하는듯.
             ) {
                 Text( text = "Hello" )
                 Text( text = "$name!")
             }
 
-            ElevatedButton(onClick = { expanded.value = !expanded.value }) {
-                Text(if (expanded.value) "Show less" else "Show more")
+            ElevatedButton(onClick = { expanded = !expanded }) {
+                Text(if (expanded) "Show less" else "Show more")
             }
         }
     }
