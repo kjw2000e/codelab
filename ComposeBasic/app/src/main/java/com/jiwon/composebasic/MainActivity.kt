@@ -1,5 +1,6 @@
 package com.jiwon.composebasic
 
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -26,6 +27,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jiwon.composebasic.ui.theme.ComposeBasicTheme
@@ -95,7 +97,10 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
                 // extrapadding.coerceAtLeast(0.dp) : 이거 없으면 에러발생함. 패딩값이 -값이 되는거 방지하는듯.
             ) {
                 Text( text = "Hello" )
-                Text( text = "$name!")
+                // 기존 글꼴 스타일에서 조금 더 변형을 하는 방법으로 copy하여 내부 속성을 커스텀할 수 있다.
+                Text( text = name, style = MaterialTheme.typography.headlineMedium.copy(
+                    fontWeight = FontWeight.ExtraBold
+                ))
             }
 
             ElevatedButton(onClick = { expanded = !expanded }) {
@@ -109,7 +114,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 private fun Greetings(
     modifier: Modifier = Modifier,
 //    names: List<String> = listOf("World", "Compose")
-    names: List<String> = List(1000) { "it" }
+    names: List<String> = List(1000) { "$it" }
 ) {
     // 여러개의 리스트를 처리하기 위해 LazyColumn을 사용. recyclerView 역할이지만
     // 자식을 재활용하지 않는다는 점이 차이점이다.
@@ -203,5 +208,21 @@ fun GreetingPreview() {
 fun MyAppPreview() {
     ComposeBasicTheme {
         MyAppHoisting()
+    }
+}
+
+// dark mode 추가
+// uiMode = UI_MODE_NIGHT_YES,
+@Preview(
+    showBackground = true,
+    widthDp = 320,
+    uiMode = UI_MODE_NIGHT_YES,
+    name = "GreetingPreviewDark"
+)
+@Preview(showBackground = true, widthDp = 320)
+@Composable
+fun GreetingPreviewDarkMode() {
+    ComposeBasicTheme {
+        Greetings()
     }
 }
